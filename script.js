@@ -24,25 +24,50 @@ const listaDeProdutos = [];
 // constante para evitar erros de digitação ao usar o localStorage
 const chave_Storage = "sistema_estoque_produtos";
 
+// Linha de status (mostra se o salvamento está funcionando)
+const statusStorage = document.createElement("p");
+statusStorage.style.fontSize = "0.9em";
+statusStorage.style.margin = "0 0 12px";
+document.querySelector(".resumo-container").insertAdjacentElement("afterend", statusStorage);
+
+function mostrarStatus(ok, mensagem) {
+    statusStorage.textContent = mensagem;
+    statusStorage.style.color = ok ? "#15803d" : "#b91c1c";
+}
+
 // 1. Salvar dados no navegador
 function salvarNoLocalStorage() {
-    const listaEmTexto = JSON.stringify(listaDeProdutos);
-    localStorage.setItem(chave_Storage, listaEmTexto);
+    try {
+        const listaEmTexto = JSON.stringify(listaDeProdutos);
+        localStorage.setItem(chave_Storage, listaEmTexto);
+        mostrarStatus(true, "✔ Dados salvos neste navegador.");
+    } catch (erro) {
+        console.error("Erro ao salvar:", erro);
+        mostrarStatus(false, "⚠ O navegador bloqueou o salvamento (localStorage). Abra o projeto com o Live Server ou fora de aba anônima.");
+    }
 }
 
 // 2. Carregar dados do navegador
 function carregarDoLocalStorage() {
-    const dadosSalvos = localStorage.getItem(chave_Storage);
+    try {
+        const dadosSalvos = localStorage.getItem(chave_Storage);
 
-    if (dadosSalvos) {
-        // converte a string JSON de volta para um array de objetos genéricos
-        const produtosObjetos = JSON.parse(dadosSalvos);
+        if (dadosSalvos) {
+            // converte a string JSON de volta para um array de objetos genéricos
+            const produtosObjetos = JSON.parse(dadosSalvos);
 
-        // reinstancia cada item como um new Produto (para recuperar os métodos)
-        produtosObjetos.forEach((prod) => {
-            const produtoInstanciado = new Produto(prod.nome, prod.preco, prod.quantidade);
-            listaDeProdutos.push(produtoInstanciado);
-        });
+            // reinstancia cada item como um new Produto (para recuperar os métodos)
+            produtosObjetos.forEach((prod) => {
+                const produtoInstanciado = new Produto(prod.nome, prod.preco, prod.quantidade);
+                listaDeProdutos.push(produtoInstanciado);
+            });
+            mostrarStatus(true, "✔ " + listaDeProdutos.length + " produto(s) carregado(s) do navegador.");
+        } else {
+            mostrarStatus(true, "Nenhum dado salvo ainda.");
+        }
+    } catch (erro) {
+        console.error("Erro ao carregar:", erro);
+        mostrarStatus(false, "⚠ Não foi possível ler os dados salvos (localStorage bloqueado ou corrompido).");
     }
 }
 
