@@ -9,33 +9,33 @@
 <body>
 <div class="container">
 <h1>Cadastro de Produtos</h1>
-
+ 
 <!--Formulário de Entrada-->
 <form id="produto-form">
 <div class="form-group">
 <label for="nome">Nome do produto:</label>
 <input type="text" id="nome" placeholder="Ex. Notebook" required/>
 </div>
-
+ 
 <div class="form-group">
-<label for="nome">Preço (R$):</label>
+<label for="preco">Preço (R$):</label>
 <input type="number" id="preco" step="0.01" placeholder="Ex. 3500.00" required/>
 </div>
-
+ 
 <div class="form-group">
-<label for="nome">Quantidade:</label>
+<label for="quantidade">Quantidade:</label>
 <input type="number" id="quantidade" placeholder="Ex. 5" required/>
 </div>
-
+ 
 <button type="submit" class="btn-primary">Adicionar Produto</button>
 </form>
-
+ 
 <!--Cabeçalho de Ações e Resumo-->
 <div class="resumo-container">
 <h3 id="total-estoque">Total em Estoque: R$0,00</h3>
 <button id="limpar-tabela" class="btn-danger">Limpar</button>
 </div>
-
+ 
 <!--Tabela de Exibição-->
 <table id="tabela-produtos">
 <thead>
@@ -52,8 +52,8 @@
 </tbody>
 </table>
 </div>
-
+ 
 <script src="script.js"></script>
-
+ 
 </body>
 </html>

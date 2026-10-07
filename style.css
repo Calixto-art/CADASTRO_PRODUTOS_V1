@@ -1,131 +1,125 @@
-*{
+* {
     box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
     margin: 0;
-    padding: 0;
+    padding: 30px 15px;
+    color: #222;
 }
 
-body{
-    font-family: arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
-    padding: 20px;
-}
-
-.container{
-    max-width: 650px;
-    background-color: #fff;
-    margin: 30px auto;
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
     padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1{
+h1 {
+    margin-top: 0;
     text-align: center;
-    margin-bottom: 20px;
-    color: #1e293b;
 }
 
-form{
+/* Formulário */
+form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 25px;
 }
 
-.form-group{
+.form-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
 
-label{
+label {
     font-weight: bold;
-    font-size: 14px;
 }
 
-input{
+input {
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
+    border-radius: 6px;
+    font-size: 1em;
 }
 
-input:focus{
+input:focus {
     outline: none;
     border-color: #2563eb;
 }
 
-button{
-    padding: 10px 15px;
-    font-size: 15px;
-    font-weight: bold;
+/* Botões */
+button {
+    padding: 10px 16px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.2;
+    color: #fff;
 }
 
-.btn-primary{
-    background-color: #2563eb;
-    color: white;
+.btn-primary {
+    background: #2563eb;
 }
 
-.btn-primary:hover{
-    background-color: #1d4ed8;
+.btn-primary:hover {
+    background: #1d4ed8;
 }
 
-.btn-danger{
-    background-color: #dc2526;
-    color: white;
+.btn-danger {
+    background: #dc2626;
 }
 
-.btn-danger:hover{
-    background-color: #b91c1c;
+.btn-danger:hover {
+    background: #b91c1c;
 }
 
-.resumo-container{
+.btn-remover {
+    background: #ef4444;
+    padding: 6px 10px;
+    font-size: 0.9em;
+}
+
+.btn-remover:hover {
+    background: #dc2626;
+}
+
+/* Resumo */
+.resumo-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 15px;
-    padding-top: 10px;
-    border-top: 2px solid #e2e8f0;
 }
 
-#total-estoque{
-    font-size: 18px;
-    color: #0f172b;
+.resumo-container h3 {
+    margin: 0;
 }
 
-table{
+/* Tabela */
+table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
 }
 
-th,td{
-    border: px solid #cbd5e1;
+th, td {
+    border-bottom: 1px solid #ddd;
     padding: 10px;
-    text-align: center;
+    text-align: left;
 }
 
-th{
-    background-color: #2563eb;
-    color: white;
+th {
+    background: #f0f2f5;
 }
 
-tbody tr:nth-child(even){
-    background-color: #f8fafc;
-}
-
-.btn-remover{
-    background-color: #ef4444;
-    color: white;
-    padding: 5px 10px;
-    font-family: 12px;
-}
-
-.btn-remover:hover{
-    background-color: #dc2626;
+tbody tr:hover {
+    background: #fafafa;
 }

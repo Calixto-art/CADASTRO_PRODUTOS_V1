@@ -1,83 +1,147 @@
 //
-//FASE 1: modelagem dos dados (Classe Base)
+// FASE 1: modelagem dos dados (Classe Base)
 //
-//A classe funciona como um molde para criar produtos
-class Produto{
-    constructor(nome,preco,quantidade){
-        //propriedades do objeto recebidas no momento da criação
+class Produto {
+    constructor(nome, preco, quantidade) {
         this.nome = nome;
-        this.preco =parseFloat(preco);
+        this.preco = parseFloat(preco);
         this.quantidade = parseInt(quantidade);
     }
-    //método que calcula o subtotal
-    calcularSubtotal(){
-        return this.preco*this.quantidade;
+
+    calcularSubtotal() {
+        return this.preco * this.quantidade;
     }
 }
 
 //
-//FASE 2: Gerenciamento de Estado (memória)
+// FASE 2: Gerenciamento de Estado (memória)
 //
-//Array global que guardará todas as instâncias da classe Produto
-
 const listaDeProdutos = [];
 
 //
-//FASE 3: Escuta de Eventos do DOM
+// FASE 2.1: Gerenciamento com localStorage
 //
-//Selecionamos o formulário pelo ID
-const formProduto = document.getElementById("produto-form");
+// constante para evitar erros de digitação ao usar o localStorage
+const chave_Storage = "sistema_estoque_produtos";
 
-//adicionar um escutador de eventos para quando o formulário for enviado
-formProduto.addEventListener("submit",function(event){
+// 1. Salvar dados no navegador
+function salvarNoLocalStorage() {
+    const listaEmTexto = JSON.stringify(listaDeProdutos);
+    localStorage.setItem(chave_Storage, listaEmTexto);
+}
+
+// 2. Carregar dados do navegador
+function carregarDoLocalStorage() {
+    const dadosSalvos = localStorage.getItem(chave_Storage);
+
+    if (dadosSalvos) {
+        // converte a string JSON de volta para um array de objetos genéricos
+        const produtosObjetos = JSON.parse(dadosSalvos);
+
+        // reinstancia cada item como um new Produto (para recuperar os métodos)
+        produtosObjetos.forEach((prod) => {
+            const produtoInstanciado = new Produto(prod.nome, prod.preco, prod.quantidade);
+            listaDeProdutos.push(produtoInstanciado);
+        });
+    }
+}
+
+//
+// FASE 3: Seleção de elementos e escuta de eventos
+//
+const formProduto = document.getElementById("produto-form");
+const tabelaBody = document.querySelector("#tabela-produtos tbody");
+const btnLimpar = document.getElementById("limpar-tabela");
+const totalEstoque = document.getElementById("total-estoque");
+
+// Formata números como moeda brasileira (R$ 1.234,56)
+function formatarMoeda(valor) {
+    return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+// Cadastro de produto
+formProduto.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    //1.captura dos valores digitados nos campos de input
     const nomeInput = document.getElementById("nome").value;
     const precoInput = document.getElementById("preco").value;
     const quantidadeInput = document.getElementById("quantidade").value;
 
-    //2. Criar uma nova instância da classe Produto
-    const novoProduto = new Produto(nomeInput,precoInput,quantidadeInput);
-
-
-    //3.Adiciona o novo produto ao array
+    const novoProduto = new Produto(nomeInput, precoInput, quantidadeInput);
     listaDeProdutos.push(novoProduto);
 
-    //4. atualiza a exibição da tabela e limpa o formulário
+    salvarNoLocalStorage();
     renderizarTabela();
     formProduto.reset();
 });
 
-//
-//FASE 4: Renderização da Interface DOM
-//
-//função responsável por desenhar na tela o estado
-//atual do array listDeProdutos
-function renderizarTabela(){
-    //seleciona o corpo da tabela (tbody)
-    const tabelaBody = document.querySelector("#tabela-produtos tbody");
+// Remover UM produto (delegação de eventos no tbody)
+tabelaBody.addEventListener("click", function (event) {
+    if (event.target.classList.contains("btn-remover")) {
+        const indice = parseInt(event.target.dataset.indice);
+        listaDeProdutos.splice(indice, 1);
 
-    //limpa o conteúdo anterior da tabela
+        salvarNoLocalStorage();
+        renderizarTabela();
+    }
+});
+
+// Limpar TODOS os produtos
+btnLimpar.addEventListener("click", function () {
+    if (listaDeProdutos.length === 0) return;
+
+    if (confirm("Tem certeza que deseja remover todos os produtos?")) {
+        listaDeProdutos.length = 0;
+
+        salvarNoLocalStorage();
+        renderizarTabela();
+    }
+});
+
+//
+// FASE 4: Cálculo do total
+//
+function calcularTotais() {
+    let valorTotal = 0;
+    let quantidadeTotal = 0;
+
+    listaDeProdutos.forEach((produto) => {
+        valorTotal += produto.calcularSubtotal();
+        quantidadeTotal += produto.quantidade;
+    });
+
+    return { valorTotal, quantidadeTotal };
+}
+
+//
+// FASE 5: Renderização da Interface DOM
+//
+function renderizarTabela() {
     tabelaBody.innerHTML = "";
 
-    //percorre o array de produtos usando forEach
-    listaDeProdutos.forEach((produto)=>{
-        //criar uam linha tr dentro da tabela
+    listaDeProdutos.forEach((produto, indice) => {
         const linha = document.createElement("tr");
 
-        //preenche o conteúdo da linha com os dados do objeto
         linha.innerHTML = `
             <td>${produto.nome}</td>
-            <td>R$ ${produto.preco.toFixed(2)}</td>
+            <td>${formatarMoeda(produto.preco)}</td>
             <td>${produto.quantidade}</td>
-            <td>R$ ${produto.calcularSubtotal().toFixed(2)}</td>
+            <td>${formatarMoeda(produto.calcularSubtotal())}</td>
             <td>
-                <button class="btn-remover">Remover</button>
+                <button class="btn-remover" data-indice="${indice}">Remover</button>
             </td>
         `;
 
-        //insere a linha criada dentro do tbody da tabela
         tabelaBody.appendChild(linha);
-    })
+    });
+
+    const { valorTotal, quantidadeTotal } = calcularTotais();
+    totalEstoque.textContent =
+        `Total em Estoque: ${formatarMoeda(valorTotal)} (${quantidadeTotal} itens)`;
 }
+
+//
+// INICIALIZAÇÃO: carrega os dados salvos e desenha a tabela ao abrir a página
+//
+carregarDoLocalStorage();
+renderizarTabela();
